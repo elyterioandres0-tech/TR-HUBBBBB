@@ -115,8 +115,10 @@ function Ocean:NewWindow()
 		Size = UDim2.fromScale(0.311, 0.780),
 		Parent = Main,
 		BackgroundTransparency = 1,
-		ScrollBarThickness = 0,
+		ScrollBarThickness = 3,
+		ScrollBarImageColor3 = Color3.fromRGB(0, 212, 255),
 		ClipsDescendants = true,
+		AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 		BorderSizePixel = 0,
 		ZIndex = 3
@@ -201,11 +203,51 @@ function Ocean:NewWindow()
 		Parent = Main
 	})
 	
+	-- UI Toggle Button (Always visible, outside Main frame)
+	local ToggleButton = createInstance("TextButton", {
+		Name = "ToggleButton",
+		Position = UDim2.fromScale(0.590, 0.220),
+		Size = UDim2.fromScale(0.040, 0.050),
+		Parent = TyrantUI,
+		BackgroundColor3 = Color3.fromRGB(30, 40, 55),
+		BorderSizePixel = 0,
+		Text = "−",
+		TextColor3 = Color3.fromRGB(0, 212, 255),
+		TextScaled = true,
+		Font = Enum.Font.GothamBold,
+		ZIndex = 100
+	})
+	
+	local ToggleButtonCorner = createInstance("UICorner", {
+		Parent = ToggleButton,
+		CornerRadius = UDim.new(0, 6)
+	})
+	
+	local ToggleButtonStroke = createInstance("UIStroke", {
+		Parent = ToggleButton,
+		Color = Color3.fromRGB(0, 212, 255),
+		Thickness = 1.5,
+		Transparency = 0.3
+	})
+	
+	local MainVisible = true
+	ToggleButton.MouseButton1Click:Connect(function()
+		MainVisible = not MainVisible
+		Main.Visible = MainVisible
+		if MainVisible then
+			ToggleButton.Text = "−"
+		else
+			ToggleButton.Text = "+"
+		end
+	end)
+	
 	CreateDrag(Main)
 	
+	local tabCounter = 0
 	function Window:Tab(Title: string, ImageID: string)
 		
 		local tab = {}
+		tabCounter = tabCounter + 1
 		
 		local Tab = createInstance("ImageButton", {
 			Name = "Tab",
@@ -216,6 +258,7 @@ function Ocean:NewWindow()
 			AutoButtonColor = false,
 			BackgroundColor3 = Color3.fromRGB(0, 212, 255),
 			BorderSizePixel = 0,
+			LayoutOrder = tabCounter,
 			ZIndex = 1
 		})
 
@@ -3699,6 +3742,12 @@ end)
 			Default  = false,
 			Callback = function(v)
 				state = v
+			end,
+		})
+		t4:Toggle("Lock Target (Mobile)", {
+			Default  = false,
+			Callback = function(v)
+				isLocked = v
 			end,
 		})
 		t4:Toggle("Auto Angle", {
